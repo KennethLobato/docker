@@ -1,2 +1,4 @@
 data/*
 !.gitkeep
+flow.xml.gz
+archive/*
