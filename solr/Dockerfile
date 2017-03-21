@@ -1,4 +1,4 @@
-FROM centos:7.3.1611
+FROM base:0.0.2
 ENV SOLR_VERSION 5.5.4
 ENV SOLR_HOME /opt/solr
 RUN yum install -y wget lsof \
@@ -10,9 +10,15 @@ RUN wget --quiet http://archive.apache.org/dist/lucene/solr/$SOLR_VERSION/solr-$
     && tar -xvzf solr-$SOLR_VERSION.tgz -C $SOLR_HOME --strip-components=1 \
     && rm -fr solr-$SOLR_VERSION.tgz
 RUN groupadd solr \
-    && useradd -r -g solr solr \
+    && useradd -r -u 1000 -g solr solr \
     && chown solr:solr -R $SOLR_HOME
 WORKDIR $SOLR_HOME
-USER solr
+VOLUME [ \
+	"$SOLR_HOME/conf" \
+	"$SOLR_HOME/data" \
+       ]
 EXPOSE 8983
-CMD [ "$SOLR_HOME/bin/solr", "start", "-f"]
+COPY entrypoint.sh /
+RUN chmod +x /entrypoint.sh
+ENTRYPOINT [ "/entrypoint.sh" ]
+CMD [ "start", "-f", "-s", "/opt/solr/conf" ]
