@@ -1,4 +1,4 @@
-FROM centos:7.3.1611
+FROM base:0.0.2
 ENV NIFI_VERSION 1.1.2
 ENV NIFI_HOME /opt/nifi
 ENV NIFI_TOOLKIT_HOME /opt/nifi-toolkit
@@ -8,22 +8,28 @@ RUN yum install -y wget \
     && rm -fr jdk-8u121-linux-x64.rpm
 RUN wget http://apache.rediris.es/nifi/$NIFI_VERSION/nifi-$NIFI_VERSION-bin.tar.gz \
     && wget http://apache.rediris.es/nifi/$NIFI_VERSION/nifi-toolkit-$NIFI_VERSION-bin.tar.gz \
-    && mkdir /opt/nifi \
-    && mkdir /opt/nifi-toolkit \
+    && mkdir $NIFI_HOME \
+    && mkdir $NIFI_TOOLKIT_HOME \
     && tar -xvzf nifi-$NIFI_VERSION-bin.tar.gz -C /opt/nifi --strip-components=1 \
     && tar -xvzf nifi-toolkit-$NIFI_VERSION-bin.tar.gz -C /opt/nifi-toolkit --strip-components=1 \
     && rm -fr nifi-$NIFI_VERSION-bin.tar.gz \
     && rm -fr nifi-toolkit-$NIFI_VERSION-bin.tar.gz
 RUN groupadd nifi \
-    && useradd -r -g nifi nifi \
+    && useradd -r -u 1000 -g nifi nifi \
     && chown nifi:nifi -R $NIFI_HOME \
     && chown nifi:nifi -R $NIFI_TOOLKIT_HOME
-RUN mkdir /data \
-    && chown nifi:nifi -R /data
-ADD 
-VOLUME ["/data"]
-USER nifi
+WORKDIR $NIFI_HOME
+VOLUME [ \
+	 "$NIFI_HOME/conf", \
+	 "$NIFI_HOME/database_repository", \
+         "$NIFI_HOME/flowfile_repository", \
+         "$NIFI_HOME/content_repository", \
+         "$NIFI_HOME/provenance_repository" \
+       ]
 EXPOSE 8080 8081
-CMD ["bin/nifi.sh", "run"]
+COPY entrypoint.sh /
+RUN chmod +x /entrypoint.sh
+ENTRYPOINT [ "/entrypoint.sh" ]
+CMD ["run"]
 
 

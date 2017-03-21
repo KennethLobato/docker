@@ -1,4 +1,4 @@
-data/*
+*/data/*
 !.gitkeep
 flow.xml.gz
-archive/*
+*/archive/*
