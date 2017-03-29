@@ -96,10 +96,12 @@
        modification REST API calls will be allowed; otherwise, error responses will be
        sent back for these requests.
   -->
-  <schemaFactory class="ManagedIndexSchemaFactory">
+<!--  <schemaFactory class="ManagedIndexSchemaFactory">
     <bool name="mutable">true</bool>
     <str name="managedSchemaResourceName">managed-schema</str>
   </schemaFactory>
+-->
+  <schemaFactory class="ClassicIndexSchemaFactory"/>
 
   <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
        Index Config - These settings control low-level behavior of indexing
@@ -596,6 +598,35 @@
     <arr name="components">
       <str>terms</str>
     </arr>
+  </requestHandler>
+
+  <requestHandler name="/nutch" class="solr.SearchHandler" >
+    <lst name="defaults">
+      <str name="defType">dismax</str>
+      <str name="echoParams">explicit</str>
+      <float name="tie">0.01</float>
+      <str name="qf">
+        content^0.5 anchor^1.0 title^1.2
+      </str>
+      <str name="pf">
+        content^0.5 anchor^1.5 title^1.2 site^1.5
+      </str>
+      <str name="fl">
+        url
+      </str>
+      <str name="mm">
+        2&lt;-1 5&lt;-2 6&lt;90%
+      </str>
+      <int name="ps">100</int>
+      <bool name="hl">true</bool>
+      <str name="q.alt">*:*</str>
+      <str name="hl.fl">title url content</str>
+      <str name="f.title.hl.fragsize">0</str>
+      <str name="f.title.hl.alternateField">title</str>
+      <str name="f.url.hl.fragsize">0</str>
+      <str name="f.url.hl.alternateField">url</str>
+      <str name="f.content.hl.fragmenter">regex</str>
+    </lst>
   </requestHandler>
 
   <!-- Legacy config for the admin interface -->

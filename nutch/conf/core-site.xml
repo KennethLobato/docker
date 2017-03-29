@@ -1,0 +1,6 @@
+<configuration>
+  <property>
+    <name>fs.defaultFS</name>
+    <value>file:///opt/nutch/data/</value>
+  </property>
+</configuration>

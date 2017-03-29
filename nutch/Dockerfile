@@ -11,10 +11,13 @@ RUN wget http://apache.rediris.es/nutch/$NUTCH_VERSION/apache-nutch-$NUTCH_VERSI
     && rm -fr apache-nutch-$NUTCH_VERSION-bin.tar.gz
 RUN groupadd nutch \
     && useradd -r -u 1000 -g nutch nutch \
+    && mkdir /home/nutch \
+    && chown nutch:nutch /home/nutch \
     && chown nutch:nutch -R $NUTCH_HOME
 WORKDIR $NUTCH_HOME
 VOLUME [ "$NUTCH_HOME/conf" ]
 COPY bootstrap.sh /
 RUN chmod +x /bootstrap.sh
+ENTRYPOINT [ "/bootstrap.sh" ]
 EXPOSE 8080 8081
-CMD [ "webapp" ]
+CMD [ "standalone" ]

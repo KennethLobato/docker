@@ -8,5 +8,9 @@
     <name>http.agent.name</name>
     <value>My Nutch Spider</value>
   </property>
+  <property>
+    <name>solr.server.url</name>
+    <value>http://172.17.0.3:8983/solr/nutch/</value>
+  </property>
 </configuration>
 
